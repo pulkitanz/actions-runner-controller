@@ -832,7 +832,7 @@ func (r *EphemeralRunnerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.Pod{}).
 		WithEventFilter(predicate.ResourceVersionChangedPredicate{}).
 		WithOptions(controller.Options{
-			MaxConcurrentReconciles: 40,
+			MaxConcurrentReconciles: 80,
 		}).
 		Complete(r)
 }
