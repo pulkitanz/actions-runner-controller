@@ -117,7 +117,7 @@ func (r *EphemeralRunnerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		}
 		if !done {
 			log.Info("Waiting for container hooks resources to be deleted")
-			return ctrl.Result{RequeueAfter: 5 * time.Second}, nil
+			return ctrl.Result{RequeueAfter: 20 * time.Second}, nil
 		}
 
 		log.Info("Removing finalizer")
@@ -304,9 +304,12 @@ func (r *EphemeralRunnerReconciler) cleanupRunnerFromService(ctx context.Context
 			return ctrl.Result{}, err
 		}
 
+		// Increasing this as this will enable other operations to happen before attempting to call this API again,
+		// deletion is not as important as creation of other pods.
+		// Eventually this will get deleted.
 		if actionsError.StatusCode == http.StatusBadRequest && actionsError.IsException("JobStillRunningException") {
-			log.Info("Runner is still running the job. Re-queue in 30 seconds")
-			return ctrl.Result{RequeueAfter: 30 * time.Second}, nil
+			log.Info("Runner is still running the job. Re-queue in 60 seconds")
+			return ctrl.Result{RequeueAfter: 60 * time.Second}, nil
 
 		}
 
