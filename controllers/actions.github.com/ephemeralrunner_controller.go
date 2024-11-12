@@ -172,9 +172,7 @@ func (r *EphemeralRunnerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			log.Error(err, "Failed to update with runner registration finalizer set")
 			return ctrl.Result{}, err
 		}
-
 		log.Info("Successfully added runner registration finalizer")
-		return ctrl.Result{}, nil
 	}
 
 	if ephemeralRunner.Status.RunnerId == 0 {
@@ -336,7 +334,6 @@ func (r *EphemeralRunnerReconciler) cleanupResources(ctx context.Context, epheme
 				return false, fmt.Errorf("failed to delete pod: %v", err)
 			}
 		}
-		return false, nil
 	case !kerrors.IsNotFound(err):
 		return false, err
 	}
@@ -353,7 +350,6 @@ func (r *EphemeralRunnerReconciler) cleanupResources(ctx context.Context, epheme
 				return false, fmt.Errorf("failed to delete secret: %v", err)
 			}
 		}
-		return false, nil
 	case !kerrors.IsNotFound(err):
 		return false, err
 	}
