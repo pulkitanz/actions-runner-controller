@@ -33,6 +33,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
@@ -335,11 +336,10 @@ func (r *EphemeralRunnerReconciler) cleanupResources(ctx context.Context, epheme
 				return false, fmt.Errorf("failed to delete pod: %v", err)
 			}
 		}
-		return false, nil
 	case !kerrors.IsNotFound(err):
 		return false, err
 	}
-	log.Info("Pod is deleted")
+	log.Info("Pod is being deleted, get it out of the controller queue")
 
 	log.Info("Cleaning up the runner jitconfig secret")
 	secret := new(corev1.Secret)
@@ -352,11 +352,10 @@ func (r *EphemeralRunnerReconciler) cleanupResources(ctx context.Context, epheme
 				return false, fmt.Errorf("failed to delete secret: %v", err)
 			}
 		}
-		return false, nil
 	case !kerrors.IsNotFound(err):
 		return false, err
 	}
-	log.Info("Secret is deleted")
+	log.Info("Secret is being deleted, get it out of the controller queue")
 
 	return true, nil
 }
@@ -828,6 +827,9 @@ func (r *EphemeralRunnerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&v1alpha1.EphemeralRunner{}).
 		Owns(&corev1.Pod{}).
 		WithEventFilter(predicate.ResourceVersionChangedPredicate{}).
+		WithOptions(controller.Options{
+			MaxConcurrentReconciles: 10,
+		}).
 		Complete(r)
 }
 
