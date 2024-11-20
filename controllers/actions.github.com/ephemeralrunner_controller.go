@@ -336,11 +336,10 @@ func (r *EphemeralRunnerReconciler) cleanupResources(ctx context.Context, epheme
 				return false, fmt.Errorf("failed to delete pod: %v", err)
 			}
 		}
-		return false, nil
 	case !kerrors.IsNotFound(err):
 		return false, err
 	}
-	log.Info("Pod is deleted")
+	log.Info("Pod is being deleted, get it out of the controller queue")
 
 	log.Info("Cleaning up the runner jitconfig secret")
 	secret := new(corev1.Secret)
@@ -353,11 +352,10 @@ func (r *EphemeralRunnerReconciler) cleanupResources(ctx context.Context, epheme
 				return false, fmt.Errorf("failed to delete secret: %v", err)
 			}
 		}
-		return false, nil
 	case !kerrors.IsNotFound(err):
 		return false, err
 	}
-	log.Info("Secret is deleted")
+	log.Info("Secret is being deleted, get it out of the controller queue")
 
 	return true, nil
 }
