@@ -577,7 +577,7 @@ func (r *EphemeralRunnerSetReconciler) SetupWithManager(mgr ctrl.Manager) error 
 		Owns(&v1alpha1.EphemeralRunner{}).
 		WithEventFilter(predicate.ResourceVersionChangedPredicate{}).
 		WithOptions(controller.Options{
-			MaxConcurrentReconciles: 20,
+			MaxConcurrentReconciles: 10,
 		}).
 		Complete(r)
 }
