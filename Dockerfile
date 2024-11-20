@@ -3,8 +3,6 @@ FROM --platform=$BUILDPLATFORM golang:1.22.4 as builder
 
 WORKDIR /workspace
 
-ARG GOPROXY=https://platform-gomodproxy.services.x.gcp.anz/
-
 # Make it runnable on a distroless image/without libc
 ENV CGO_ENABLED=0
 # Copy the Go Modules manifests
