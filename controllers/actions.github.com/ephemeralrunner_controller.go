@@ -831,7 +831,6 @@ func (r *EphemeralRunnerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			MaxConcurrentReconciles: 10,
 		}).
 		Complete(r)
-
 }
 
 func runnerContainerStatus(pod *corev1.Pod) *corev1.ContainerStatus {
